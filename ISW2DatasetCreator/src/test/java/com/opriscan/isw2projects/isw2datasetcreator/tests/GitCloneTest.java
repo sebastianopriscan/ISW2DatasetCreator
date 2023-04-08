@@ -1,64 +1,26 @@
 package com.opriscan.isw2projects.isw2datasetcreator.tests;
 
+import com.opriscan.isw2projects.isw2datasetcreator.exceptions.CacheException;
 import com.opriscan.isw2projects.isw2datasetcreator.exceptions.CloningException;
-import com.opriscan.isw2projects.isw2datasetcreator.file_scrapers.GitCloner;
-import com.opriscan.isw2projects.isw2datasetcreator.tests.test_exceptions.FileDeletionException;
-import org.junit.BeforeClass;
+import com.opriscan.isw2projects.isw2datasetcreator.file_scrapers.CacheManager;
+import org.junit.Before;
 import org.junit.Test;
 
 import java.io.File;
-import java.nio.file.Files;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.fail;
 
 public class GitCloneTest {
 
     private static final String CACHE_PATH = "./src/main/resources/.cache" ;
 
-    private static final Logger LOGGER = Logger.getLogger("com.opriscan.isw2projects.isw2datasetcreator.tests.GitCloneTest") ;
-
-    private static void deleteDirectory(File file) throws FileDeletionException {
-        if(file.isDirectory())
-        {
-            File[] subDirs = file.listFiles() ;
-
-            if (subDirs == null) throw new FileDeletionException() ;
-
-            for(File cacheFile : subDirs)
-            {
-                deleteDirectory(cacheFile);
-            }
-        }
-
-        if(!file.delete()) throw new FileDeletionException() ;
-    }
-
-    @BeforeClass
-    public static void cleanCache() {
-
-        String hello ;
-
-        File file = new File(CACHE_PATH) ;
-
-        if(file.exists())
-        {
-            try {
-                File[] dirs = file.listFiles() ;
-                if(dirs == null) throw new FileDeletionException() ;
-                for (File dir : dirs)
-                {
-                    deleteDirectory(dir);
-                }
-
-            } catch (FileDeletionException e)
-            {
-                LOGGER.log(Level.SEVERE, "Unable to delete cache recursively, check file permission and do it manually");
-                fail();
-            }
-        } else {
-            if(!file.mkdir()) fail() ;
+    @Before
+    public void cleanCache() {
+        try {
+            CacheManager.getInstance().cleanCache();
+        } catch (CacheException e) {
+            fail() ;
         }
 
     }
@@ -66,7 +28,7 @@ public class GitCloneTest {
     @Test
     public void testCloning() {
         try {
-            GitCloner cloner = new GitCloner() ;
+            CacheManager cloner = CacheManager.getInstance() ;
             cloner.cloneRepository("https://github.com/sebastianopriscan/Test28032023.git");
 
             File presenceFile = new File(CACHE_PATH + "/Test28032023") ;
@@ -83,7 +45,25 @@ public class GitCloneTest {
 
             if(!condition) fail();
 
-        } catch (CloningException e)
+        } catch (CacheException | CloningException e)
+        {
+            fail() ;
+        }
+    }
+
+    @Test
+    public void testCacheHits() {
+        try {
+            CacheManager cloner = CacheManager.getInstance() ;
+            boolean result = cloner.cloneRepository("https://github.com/sebastianopriscan/Test28032023.git");
+
+            if(!result) fail();
+
+            result = cloner.cloneRepository("https://github.com/sebastianopriscan/Test28032023.git");
+
+            assertFalse(result);
+
+        } catch (CacheException | CloningException e)
         {
             fail() ;
         }
