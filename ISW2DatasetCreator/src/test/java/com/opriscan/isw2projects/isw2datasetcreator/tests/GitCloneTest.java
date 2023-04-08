@@ -37,6 +37,9 @@ public class GitCloneTest {
 
     @BeforeClass
     public static void cleanCache() {
+
+        String hello ;
+
         File file = new File(CACHE_PATH) ;
 
         if(file.exists())
