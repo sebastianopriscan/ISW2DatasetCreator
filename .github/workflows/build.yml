@@ -34,6 +34,4 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}  # Needed to get PR information, if any
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-        run: cd ./ISW2DatasetCreator ; mvn -e -B verify org.sonarsource.scanner.maven:sonar-maven-plugin:sonar -Dsonar.projectKey=sebastianopriscan_ISW2DatasetCreator
-        
-      - run: cd ./ISW2DatasetCreator/src/main/resources/.cache ; ls -R
+        run: cd ./ISW2DatasetCreator ; mvn -B verify org.sonarsource.scanner.maven:sonar-maven-plugin:sonar -Dsonar.projectKey=sebastianopriscan_ISW2DatasetCreator

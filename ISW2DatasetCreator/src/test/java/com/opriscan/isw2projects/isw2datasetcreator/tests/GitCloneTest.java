@@ -64,7 +64,7 @@ public class GitCloneTest {
     public void testCloning() {
         try {
             GitCloner cloner = new GitCloner() ;
-            cloner.cloneRepository("git@github.com:sebastianopriscan/Test28032023.git");
+            cloner.cloneRepository("https://github.com/sebastianopriscan/Test28032023.git");
 
             File presenceFile = new File(CACHE_PATH + "/Test28032023") ;
 
