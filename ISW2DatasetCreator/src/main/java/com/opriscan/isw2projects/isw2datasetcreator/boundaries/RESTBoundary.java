@@ -29,12 +29,10 @@ public class RESTBoundary {
             {
                 stream = con.getErrorStream() ;
                 byte[] result = stream.readAllBytes() ;
-                System.out.println("Error in HTTP Response, printing details") ;
-                System.out.println(new String(result));
                 stream.close();
                 con.disconnect();
 
-                throw new RestCallException("Unable to get http response from server") ;
+                throw new RestCallException("Unable to get http response from server, details :\n" + new String(result)) ;
             } else {
                 String result = new String(con.getInputStream().readAllBytes()) ;
 

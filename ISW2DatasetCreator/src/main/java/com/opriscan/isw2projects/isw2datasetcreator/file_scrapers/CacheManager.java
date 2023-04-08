@@ -7,6 +7,7 @@ import com.opriscan.isw2projects.isw2datasetcreator.exceptions.FileDeletionExcep
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.nio.file.Files;
 
 public class CacheManager {
 
@@ -30,8 +31,8 @@ public class CacheManager {
     private CacheManager() throws CloningException{
         File cache = new File(CACHE_PATH) ;
 
-        if(!cache.exists()) {
-            if(!cache.mkdir()) throw new CloningException("Unable to create .cache directory") ;
+        if(!cache.exists() && !cache.mkdir()) {
+            throw new CloningException("Unable to create .cache directory") ;
         }
     }
 
@@ -58,13 +59,22 @@ public class CacheManager {
         return url.substring(++lastSlashIndex, dotIndex) ;
     }
 
+    private void waitForProcess(Process process) {
+        try {
+            process.waitFor() ;
+        } catch (InterruptedException e)
+        {
+            Thread.currentThread().interrupt();
+        }
+    }
+
     public boolean cloneRepository(String gitURL) throws CloningException
     {
         try {
             checkGitInstalled();
             String repoName = extractRepoName(gitURL) ;
 
-            File repoDir = new File(CACHE_PATH + "/" + repoName) ;
+            File repoDir = new File(CACHE_PATH, repoName) ;
 
             if(repoDir.exists() && repoDir.isDirectory()) return false ;
 
@@ -87,12 +97,7 @@ public class CacheManager {
         try {
             Process process = Runtime.getRuntime().exec(commands) ;
 
-            try {
-                process.waitFor() ;
-            } catch (InterruptedException e)
-            {
-                Thread.currentThread().interrupt();
-            }
+            waitForProcess(process);
 
             return true ;
 
@@ -120,6 +125,8 @@ public class CacheManager {
 
         Process process = Runtime.getRuntime().exec(commands) ;
 
+        waitForProcess(process) ;
+
         InputStream errors = process.getErrorStream() ;
 
         byte[] content = new byte[1] ;
@@ -140,7 +147,11 @@ public class CacheManager {
             }
         }
 
-        if(!file.delete()) throw new FileDeletionException() ;
+        try {
+            Files.delete(file.toPath());
+        } catch (IOException e) {
+            throw new FileDeletionException() ;
+        }
     }
 
     public void cleanCache() throws CacheException {
