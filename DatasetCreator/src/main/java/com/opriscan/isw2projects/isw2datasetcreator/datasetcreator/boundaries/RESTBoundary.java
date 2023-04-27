@@ -1,8 +1,8 @@
-package com.opriscan.isw2projects.isw2datasetcreator.boundaries;
+package com.opriscan.isw2projects.isw2datasetcreator.datasetcreator.boundaries;
 
-import com.opriscan.isw2projects.isw2datasetcreator.beans.RESTQuery;
-import com.opriscan.isw2projects.isw2datasetcreator.beans.RESTResult;
-import com.opriscan.isw2projects.isw2datasetcreator.exceptions.RestCallException;
+import com.opriscan.isw2projects.isw2datasetcreator.datasetcreator.beans.RESTQuery;
+import com.opriscan.isw2projects.isw2datasetcreator.datasetcreator.beans.RESTResult;
+import com.opriscan.isw2projects.isw2datasetcreator.datasetcreator.exceptions.RestCallException;
 
 import javax.net.ssl.HttpsURLConnection;
 import java.io.IOException;

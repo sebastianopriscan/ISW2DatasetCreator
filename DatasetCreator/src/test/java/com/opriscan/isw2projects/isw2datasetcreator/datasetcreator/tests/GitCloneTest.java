@@ -1,8 +1,8 @@
-package com.opriscan.isw2projects.isw2datasetcreator.tests;
+package com.opriscan.isw2projects.isw2datasetcreator.datasetcreator.tests;
 
-import com.opriscan.isw2projects.isw2datasetcreator.exceptions.CacheException;
-import com.opriscan.isw2projects.isw2datasetcreator.exceptions.CloningException;
-import com.opriscan.isw2projects.isw2datasetcreator.file_scrapers.CacheManager;
+import com.opriscan.isw2projects.isw2datasetcreator.datasetcreator.exceptions.CacheException;
+import com.opriscan.isw2projects.isw2datasetcreator.datasetcreator.exceptions.CloningException;
+import com.opriscan.isw2projects.isw2datasetcreator.datasetcreator.file_scrapers.CacheManager;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -13,7 +13,7 @@ import static org.junit.Assert.fail;
 
 public class GitCloneTest {
 
-    private static final String CACHE_PATH = "./src/main/resources/.cache" ;
+    private static final String CACHE_PATH = "./DatasetCreator/src/main/resources/.cache" ;
 
     @Before
     public void cleanCache() {

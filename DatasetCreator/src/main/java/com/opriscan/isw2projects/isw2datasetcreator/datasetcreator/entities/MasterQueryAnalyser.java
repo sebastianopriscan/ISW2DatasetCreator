@@ -1,6 +1,6 @@
-package com.opriscan.isw2projects.isw2datasetcreator.entities;
+package com.opriscan.isw2projects.isw2datasetcreator.datasetcreator.entities;
 
-import com.opriscan.isw2projects.isw2datasetcreator.exceptions.AnalyserNotFoundException;
+import com.opriscan.isw2projects.isw2datasetcreator.datasetcreator.exceptions.AnalyserNotFoundException;
 
 import java.util.ArrayList;
 import java.util.List;

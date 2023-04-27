@@ -1,4 +1,4 @@
-package com.opriscan.isw2projects.isw2datasetcreator.tests;
+package com.opriscan.isw2projects.isw2datasetcreator.datasetcreator.tests;
 
 import org.junit.Test;
 

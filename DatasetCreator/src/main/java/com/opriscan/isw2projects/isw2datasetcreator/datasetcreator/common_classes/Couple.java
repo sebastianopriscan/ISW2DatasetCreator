@@ -1,4 +1,4 @@
-package com.opriscan.isw2projects.isw2datasetcreator.common_classes;
+package com.opriscan.isw2projects.isw2datasetcreator.datasetcreator.common_classes;
 
 public class Couple <T, Q> {
 

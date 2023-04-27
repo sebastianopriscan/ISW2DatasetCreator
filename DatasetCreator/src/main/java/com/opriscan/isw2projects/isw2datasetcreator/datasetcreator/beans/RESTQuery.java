@@ -1,4 +1,4 @@
-package com.opriscan.isw2projects.isw2datasetcreator.beans;
+package com.opriscan.isw2projects.isw2datasetcreator.datasetcreator.beans;
 
 public class RESTQuery {
 

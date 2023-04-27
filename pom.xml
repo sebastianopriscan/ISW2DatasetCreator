@@ -10,7 +10,8 @@
     <packaging>pom</packaging>
     
     <modules>
-    <module>DatasetCreator</module>
+        <module>DatasetCreator</module>
+        <module>TicketDistributionInBranchesAnalyser</module>
     </modules>
 
     <properties>

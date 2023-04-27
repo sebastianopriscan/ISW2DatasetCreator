@@ -1,19 +1,36 @@
-package com.opriscan.isw2projects.isw2datasetcreator.file_scrapers;
+package com.opriscan.isw2projects.isw2datasetcreator.datasetcreator.file_scrapers;
 
-import com.opriscan.isw2projects.isw2datasetcreator.exceptions.CacheException;
-import com.opriscan.isw2projects.isw2datasetcreator.exceptions.CloningException;
-import com.opriscan.isw2projects.isw2datasetcreator.exceptions.FileDeletionException;
+import com.opriscan.isw2projects.isw2datasetcreator.datasetcreator.exceptions.CacheException;
+import com.opriscan.isw2projects.isw2datasetcreator.datasetcreator.exceptions.CloningException;
+import com.opriscan.isw2projects.isw2datasetcreator.datasetcreator.exceptions.FileDeletionException;
+import com.opriscan.isw2projects.isw2datasetcreator.datasetcreator.exceptions.LogParsingException;
 
-import java.io.File;
-import java.io.IOException;
-import java.io.InputStream;
+import java.io.*;
 import java.nio.file.Files;
+import java.util.*;
 
 public class CacheManager {
 
-    private static final String CACHE_PATH = "./src/main/resources/.cache" ;
+    private static final String CACHE_PATH = "./DatasetCreator/src/main/resources/.cache" ;
+
+    private final Map<String, String> ENTRIES = new HashMap<>() ;
 
     private static CacheManager instance ;
+
+    private String[] prepareCommands() {
+        String[] commands = new String[3] ;
+
+        if (System.getProperty("os.name").toLowerCase().contains("windows"))
+        {
+            commands[0] = "cmd.exe" ;
+            commands[1] = "/c" ;
+        } else {
+            commands[0] = "/bin/bash" ;
+            commands[1] = "-c" ;
+        }
+
+        return commands ;
+    }
 
     public static synchronized CacheManager getInstance() throws CacheException {
         try {
@@ -70,34 +87,34 @@ public class CacheManager {
 
     public boolean cloneRepository(String gitURL) throws CloningException
     {
+
+        String repoName ;
+
         try {
             checkGitInstalled();
-            String repoName = extractRepoName(gitURL) ;
+            repoName = extractRepoName(gitURL) ;
 
             File repoDir = new File(CACHE_PATH, repoName) ;
 
-            if(repoDir.exists() && repoDir.isDirectory()) return false ;
+            if(repoDir.exists() && repoDir.isDirectory()) {
+                ENTRIES.put(gitURL, repoName) ;
+                return false ;
+            }
 
         } catch (IOException | CloningException | CacheException e) {
             throw new CloningException(e.getMessage()) ;
         }
 
-        String[] commands = new String[3] ;
+        String[] commands = prepareCommands() ;
 
-        if (System.getProperty("os.name").toLowerCase().contains("windows"))
-        {
-            commands[0] = "cmd.exe" ;
-            commands[1] = "/c" ;
-        } else {
-            commands[0] = "/bin/bash" ;
-            commands[1] = "-c" ;
-            commands[2] = String.format("cd %s ; git clone %s", CACHE_PATH, gitURL) ;
-        }
+        commands[2] = String.format("cd %s ; git clone %s", CACHE_PATH, gitURL) ;
 
         try {
             Process process = Runtime.getRuntime().exec(commands) ;
 
             waitForProcess(process);
+
+            ENTRIES.put(gitURL, repoName) ;
 
             return true ;
 
@@ -106,20 +123,71 @@ public class CacheManager {
         {
             throw new CloningException("Unable to launch git") ;
         }
+    }
 
+    public String logRepo(String repoURL) throws CloningException {
+        if(!ENTRIES.containsKey(repoURL)) cloneRepository(repoURL) ;
+
+        String[] commands = prepareCommands() ;
+
+        commands[2] = String.format("cd %s ; git --no-pager log --all --pretty=format:\"%%H%%n%%B%%n--\"", CACHE_PATH + "/" + ENTRIES.get(repoURL)) ;
+
+        try {
+            Process process = Runtime.getRuntime().exec(commands) ;
+
+            Thread.sleep(500);
+
+            return new String(process.getInputStream().readAllBytes()) ;
+
+        }catch (IOException e)
+        {
+            throw new CloningException("Unable to launch git") ;
+        } catch (InterruptedException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public List<GitCommit> findCommitsContaining(String githubURL, String text) throws CloningException, LogParsingException {
+
+        String log = logRepo(githubURL) ;
+        return GitLogParser.parseCommitLog(log, text) ;
+    }
+
+    public Set<String> findCommitsBranches(String githubURL, String commitID) throws CloningException {
+        if(!ENTRIES.containsKey(githubURL)) cloneRepository(githubURL) ;
+
+        String[] commands = prepareCommands() ;
+        commands[2] = String.format("cd %s ; git branch -a --contains %s", CACHE_PATH + "/" + ENTRIES.get(githubURL), commitID) ;
+
+        try {
+            Process process = Runtime.getRuntime().exec(commands) ;
+
+            waitForProcess(process);
+
+            String result = new String(process.getInputStream().readAllBytes()) ;
+
+            BufferedReader reader = new BufferedReader(new StringReader(result)) ;
+
+            reader.readLine() ;
+
+            Set<String> retVal = new HashSet<>() ;
+
+            do {
+                String line = reader.readLine() ;
+                if(line == null) break;
+                retVal.add(line) ;
+            } while (true) ;
+
+            return retVal ;
+
+        }catch (IOException e)
+        {
+            throw new CloningException("Unable to launch git") ;
+        }
     }
 
     private void checkGitInstalled() throws IOException, CloningException {
-        String[] commands = new String[3] ;
-
-        if (System.getProperty("os.name").toLowerCase().contains("windows"))
-        {
-            commands[0] = "cmd.exe" ;
-            commands[1] = "/c" ;
-        } else {
-            commands[0] = "/bin/bash" ;
-            commands[1] = "-c" ;
-        }
+        String[] commands = prepareCommands() ;
 
         commands[2] = "git --version" ;
 
@@ -167,6 +235,8 @@ public class CacheManager {
                 {
                     deleteDirectory(dir);
                 }
+
+                ENTRIES.clear() ;
 
             } catch (FileDeletionException e)
             {

@@ -1,4 +1,4 @@
-package com.opriscan.isw2projects.isw2datasetcreator.entities;
+package com.opriscan.isw2projects.isw2datasetcreator.datasetcreator.entities;
 
 import java.util.List;
 
