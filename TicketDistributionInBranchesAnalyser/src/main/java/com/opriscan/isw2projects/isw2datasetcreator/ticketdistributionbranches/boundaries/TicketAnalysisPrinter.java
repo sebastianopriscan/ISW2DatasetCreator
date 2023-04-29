@@ -13,7 +13,7 @@ public class TicketAnalysisPrinter {
     private static final Logger LOGGER = Logger.getLogger(TicketAnalysisPrinter.class.getName()) ;
 
     public static void printResults(Map<String, Set<String>> tickets) {
-        File output = new File("TicketDistributionInBranchesAnalyser/src/main/resources/output.csv") ;
+        File output = new File("./src/main/resources/output.csv") ;
 
         try {
             if(!output.createNewFile()) {

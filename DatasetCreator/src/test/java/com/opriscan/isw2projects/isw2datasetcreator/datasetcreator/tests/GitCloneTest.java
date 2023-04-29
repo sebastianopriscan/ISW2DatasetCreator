@@ -13,10 +13,12 @@ import static org.junit.Assert.fail;
 
 public class GitCloneTest {
 
-    private static final String CACHE_PATH = "./DatasetCreator/src/main/resources/.cache" ;
+    private static final String CACHE_PATH = "./src/main/resources/.cache" ;
 
     @Before
     public void cleanCache() {
+
+        System.out.println(System.getProperty("user.dir"));
         try {
             CacheManager.getInstance().cleanCache();
         } catch (CacheException e) {
@@ -27,6 +29,7 @@ public class GitCloneTest {
 
     @Test
     public void testCloning() {
+
         try {
             CacheManager cloner = CacheManager.getInstance() ;
             cloner.cloneRepository("https://github.com/sebastianopriscan/Test28032023.git");

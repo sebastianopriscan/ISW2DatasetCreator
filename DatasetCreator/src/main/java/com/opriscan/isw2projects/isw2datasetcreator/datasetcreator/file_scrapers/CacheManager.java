@@ -11,7 +11,7 @@ import java.util.*;
 
 public class CacheManager {
 
-    private static final String CACHE_PATH = "./DatasetCreator/src/main/resources/.cache" ;
+    private static final String CACHE_PATH = "./src/main/resources/.cache" ;
 
     private final Map<String, String> ENTRIES = new HashMap<>() ;
 

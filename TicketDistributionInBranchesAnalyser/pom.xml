@@ -13,7 +13,7 @@
 
     <dependencies>
         <dependency>
-            <groupId>com.opriscan.isw2projects.isw2datasetcreator.datasetcreator</groupId>
+            <groupId>com.opriscan.isw2projects.isw2datasetcreator</groupId>
             <artifactId>DatasetCreator</artifactId>
             <version>1.0-SNAPSHOT</version>
             <scope>compile</scope>
