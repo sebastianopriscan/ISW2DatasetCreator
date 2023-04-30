@@ -141,7 +141,9 @@ public class CacheManager {
 
         }catch (IOException | InterruptedException e)
         {
+            Thread.currentThread().interrupt() ;
             throw new CloningException("Unable to launch git to get repo log") ;
+
         }
     }
 
