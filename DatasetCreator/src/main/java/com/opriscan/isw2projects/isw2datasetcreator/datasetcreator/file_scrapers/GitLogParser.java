@@ -11,6 +11,8 @@ import java.util.Objects;
 
 public class GitLogParser {
 
+    private GitLogParser() {}
+
     public static List<GitCommit> parseCommitLog(String log, String regexp) throws LogParsingException{
 
         List<GitCommit> retVal = new ArrayList<>() ;

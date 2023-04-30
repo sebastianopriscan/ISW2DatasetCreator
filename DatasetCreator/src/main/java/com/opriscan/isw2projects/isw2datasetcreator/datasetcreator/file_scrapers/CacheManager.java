@@ -13,7 +13,7 @@ public class CacheManager {
 
     private static final String CACHE_PATH = "./src/main/resources/.cache" ;
 
-    private final Map<String, String> ENTRIES = new HashMap<>() ;
+    private final Map<String, String> entries = new HashMap<>() ;
 
     private static CacheManager instance ;
 
@@ -97,7 +97,7 @@ public class CacheManager {
             File repoDir = new File(CACHE_PATH, repoName) ;
 
             if(repoDir.exists() && repoDir.isDirectory()) {
-                ENTRIES.put(gitURL, repoName) ;
+                entries.put(gitURL, repoName) ;
                 return false ;
             }
 
@@ -114,23 +114,23 @@ public class CacheManager {
 
             waitForProcess(process);
 
-            ENTRIES.put(gitURL, repoName) ;
+            entries.put(gitURL, repoName) ;
 
             return true ;
 
 
         }catch (IOException e)
         {
-            throw new CloningException("Unable to launch git") ;
+            throw new CloningException("Unable to launch git for cloning") ;
         }
     }
 
     public String logRepo(String repoURL) throws CloningException {
-        if(!ENTRIES.containsKey(repoURL)) cloneRepository(repoURL) ;
+        if(!entries.containsKey(repoURL)) cloneRepository(repoURL) ;
 
         String[] commands = prepareCommands() ;
 
-        commands[2] = String.format("cd %s ; git --no-pager log --all --pretty=format:\"%%H%%n%%B%%n--\"", CACHE_PATH + "/" + ENTRIES.get(repoURL)) ;
+        commands[2] = String.format("cd %s ; git --no-pager log --all --pretty=format:\"%%H%%n%%B%%n--\"", CACHE_PATH + "/" + entries.get(repoURL)) ;
 
         try {
             Process process = Runtime.getRuntime().exec(commands) ;
@@ -139,11 +139,9 @@ public class CacheManager {
 
             return new String(process.getInputStream().readAllBytes()) ;
 
-        }catch (IOException e)
+        }catch (IOException | InterruptedException e)
         {
-            throw new CloningException("Unable to launch git") ;
-        } catch (InterruptedException e) {
-            throw new RuntimeException(e);
+            throw new CloningException("Unable to launch git to get repo log") ;
         }
     }
 
@@ -154,10 +152,10 @@ public class CacheManager {
     }
 
     public Set<String> findCommitsBranches(String githubURL, String commitID) throws CloningException {
-        if(!ENTRIES.containsKey(githubURL)) cloneRepository(githubURL) ;
+        if(!entries.containsKey(githubURL)) cloneRepository(githubURL) ;
 
         String[] commands = prepareCommands() ;
-        commands[2] = String.format("cd %s ; git branch -a --contains %s", CACHE_PATH + "/" + ENTRIES.get(githubURL), commitID) ;
+        commands[2] = String.format("cd %s ; git branch -a --contains %s", CACHE_PATH + "/" + entries.get(githubURL), commitID) ;
 
         try {
             Process process = Runtime.getRuntime().exec(commands) ;
@@ -168,7 +166,9 @@ public class CacheManager {
 
             BufferedReader reader = new BufferedReader(new StringReader(result)) ;
 
-            reader.readLine() ;
+            String firstLine = reader.readLine() ;
+
+            if (firstLine == null) throw  new CloningException("Error in gathering log content") ;
 
             Set<String> retVal = new HashSet<>() ;
 
@@ -182,7 +182,7 @@ public class CacheManager {
 
         }catch (IOException e)
         {
-            throw new CloningException("Unable to launch git") ;
+            throw new CloningException("Unable to launch git to find a commit branches") ;
         }
     }
 
@@ -236,7 +236,7 @@ public class CacheManager {
                     deleteDirectory(dir);
                 }
 
-                ENTRIES.clear() ;
+                entries.clear() ;
 
             } catch (FileDeletionException e)
             {

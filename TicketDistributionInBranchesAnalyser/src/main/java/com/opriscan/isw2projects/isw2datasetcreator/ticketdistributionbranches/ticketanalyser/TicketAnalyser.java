@@ -43,10 +43,10 @@ public class TicketAnalyser {
                     Set<String> branches = manager.findCommitsBranches(githubUrl, commit.getCommitID()) ;
 
                     for (String branch : branches) {
-                        List<String> commit_branch = new ArrayList<>() ;
-                        commit_branch.add(commit.getCommitID()) ;
-                        commit_branch.add(branch) ;
-                        entries.add(commit_branch) ;
+                        List<String> commitBranch = new ArrayList<>() ;
+                        commitBranch.add(commit.getCommitID()) ;
+                        commitBranch.add(branch) ;
+                        entries.add(commitBranch) ;
                     }
 
                 }
