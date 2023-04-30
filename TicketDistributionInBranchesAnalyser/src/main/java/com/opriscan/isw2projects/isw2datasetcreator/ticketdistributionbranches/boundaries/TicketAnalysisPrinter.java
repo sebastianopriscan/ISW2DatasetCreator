@@ -3,6 +3,7 @@ package com.opriscan.isw2projects.isw2datasetcreator.ticketdistributionbranches.
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.logging.Level;
@@ -12,7 +13,7 @@ public class TicketAnalysisPrinter {
 
     private static final Logger LOGGER = Logger.getLogger(TicketAnalysisPrinter.class.getName()) ;
 
-    public static void printResults(Map<String, Set<String>> tickets) {
+    public static void printResults(Map<String, Set<List<String>>> tickets) {
         File output = new File("./src/main/resources/output.csv") ;
 
         try {
@@ -31,8 +32,13 @@ public class TicketAnalysisPrinter {
         try(FileOutputStream out = new FileOutputStream(output)) {
 
             for (String ticket : tickets.keySet()) {
-                for (String branch : tickets.get(ticket)) {
-                    out.write(String.format("%s ; %s\n", ticket, branch).getBytes());
+                for (List<String> data : tickets.get(ticket)) {
+                    String result = String.format("%s ", ticket) ;
+                    for (String column : data) {
+                        result = result.concat(String.format("; %s ", column)) ;
+                    }
+                    result = result.concat("\n") ;
+                    out.write(result.getBytes());
                 }
             }
 

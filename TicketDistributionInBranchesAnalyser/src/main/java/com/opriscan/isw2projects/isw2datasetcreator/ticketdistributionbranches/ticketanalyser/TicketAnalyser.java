@@ -25,7 +25,7 @@ public class TicketAnalyser {
 
         try {
 
-            Map<String, Set<String>> map = new HashMap<>() ;
+            Map<String, Set<List<String>>> map = new HashMap<>() ;
 
             CacheManager manager = CacheManager.getInstance() ;
 
@@ -37,13 +37,20 @@ public class TicketAnalyser {
             List<String> ticketNames = new TicketFormatter().getBugTicketNames(new JSONObject(jiraResult.getResult())) ;
 
             for(String ticket : ticketNames) {
-                Set<String> branches = new HashSet<>() ;
+                Set<List<String>> entries = new HashSet<>() ;
                 List<GitCommit> commits = manager.findCommitsContaining(githubUrl, ".{0,100000}"+ticket+".{0,100000}") ;
                 for (GitCommit commit : commits) {
+                    Set<String> branches = manager.findCommitsBranches(githubUrl, commit.getCommitID()) ;
 
-                    branches.addAll(manager.findCommitsBranches(githubUrl, commit.getCommitID())) ;
+                    for (String branch : branches) {
+                        List<String> commit_branch = new ArrayList<>() ;
+                        commit_branch.add(commit.getCommitID()) ;
+                        commit_branch.add(branch) ;
+                        entries.add(commit_branch) ;
+                    }
+
                 }
-                map.put(ticket, branches) ;
+                map.put(ticket, entries) ;
             }
 
             TicketAnalysisPrinter.printResults(map);
