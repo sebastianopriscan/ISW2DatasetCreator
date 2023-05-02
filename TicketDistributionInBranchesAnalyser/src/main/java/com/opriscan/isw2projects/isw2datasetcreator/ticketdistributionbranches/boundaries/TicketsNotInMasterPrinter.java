@@ -10,13 +10,13 @@ import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-public class TicketAnalysisPrinter extends Printer{
+public class TicketsNotInMasterPrinter extends Printer{
 
-    private static final Logger LOGGER = Logger.getLogger(TicketAnalysisPrinter.class.getName()) ;
+    private static final Logger LOGGER = Logger.getLogger(TicketsNotInMasterPrinter.class.getName()) ;
 
     @Override
     public void printResults(Map<String, Set<List<String>>> tickets) {
-        File output = new File("./src/main/resources/output" + TicketAnalysisPrinter.class.getSimpleName() + ".csv") ;
+        File output = new File("./src/main/resources/output"+ TicketsNotInMasterPrinter.class.getSimpleName() + ".csv") ;
 
         try {
             deleteOldFile(output) ;
@@ -30,7 +30,28 @@ public class TicketAnalysisPrinter extends Printer{
         try(FileOutputStream out = new FileOutputStream(output)) {
 
             for (Map.Entry<String, Set<List<String>>> ticket : tickets.entrySet()) {
-                printMapDump(ticket, out);
+
+                boolean notInMaster = true ;
+
+                try {
+                    for (List<String> data : ticket.getValue()) {
+
+                        String branch = data.get(3);
+
+                        if (branch.contains("remotes/origin/master")) {
+                            notInMaster = false;
+                            break;
+                        }
+                    }
+                }
+                catch (IndexOutOfBoundsException e) {
+                    LOGGER.log(Level.SEVERE, "Error in row format");
+                    continue;
+                }
+
+                if (notInMaster) {
+                    printMapDump(ticket, out) ;
+                }
             }
 
             out.flush();

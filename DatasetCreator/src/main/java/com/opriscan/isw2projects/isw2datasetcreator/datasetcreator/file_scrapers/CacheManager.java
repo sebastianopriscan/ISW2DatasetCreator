@@ -135,7 +135,7 @@ public class CacheManager {
         try {
             Process process = Runtime.getRuntime().exec(commands) ;
 
-            Thread.sleep(500);
+            Thread.sleep(100);
 
             return new String(process.getInputStream().readAllBytes()) ;
 
@@ -170,7 +170,8 @@ public class CacheManager {
 
             String firstLine = reader.readLine() ;
 
-            if (firstLine == null) throw  new CloningException("Error in gathering log content") ;
+            if (firstLine == null)
+                return new HashSet<>() ;
 
             Set<String> retVal = new HashSet<>() ;
 

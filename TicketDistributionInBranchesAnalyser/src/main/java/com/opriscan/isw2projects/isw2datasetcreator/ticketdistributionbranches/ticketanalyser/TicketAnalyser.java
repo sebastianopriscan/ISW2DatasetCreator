@@ -7,6 +7,7 @@ import com.opriscan.isw2projects.isw2datasetcreator.datasetcreator.exceptions.Ca
 import com.opriscan.isw2projects.isw2datasetcreator.datasetcreator.exceptions.CloningException;
 import com.opriscan.isw2projects.isw2datasetcreator.datasetcreator.exceptions.LogParsingException;
 import com.opriscan.isw2projects.isw2datasetcreator.datasetcreator.exceptions.RestCallException;
+import com.opriscan.isw2projects.isw2datasetcreator.ticketdistributionbranches.boundaries.PrinterManager;
 import com.opriscan.isw2projects.isw2datasetcreator.ticketdistributionbranches.boundaries.TicketAnalysisPrinter;
 import com.opriscan.isw2projects.isw2datasetcreator.datasetcreator.file_scrapers.CacheManager;
 import com.opriscan.isw2projects.isw2datasetcreator.datasetcreator.file_scrapers.GitCommit;
@@ -53,7 +54,7 @@ public class TicketAnalyser {
                 map.put(ticket, entries) ;
             }
 
-            TicketAnalysisPrinter.printResults(map);
+            PrinterManager.executePrinters(map);
 
         } catch (CacheException | CloningException | LogParsingException | RestCallException |
                  TicketFormatterException e) {
