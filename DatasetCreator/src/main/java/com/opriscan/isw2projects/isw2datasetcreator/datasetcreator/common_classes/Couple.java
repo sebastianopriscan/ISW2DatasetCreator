@@ -25,4 +25,18 @@ public class Couple <T, Q> {
     public void setSecond(Q second) {
         this.second = second;
     }
+
+    @Override
+    public int hashCode() {
+        return first.toString().concat(second.toString()).hashCode() ;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if(obj.getClass() != this.getClass()) return false ;
+
+        Couple<T, Q> cast = (Couple<T, Q>) obj ;
+
+        return this.first.equals(cast.first) && this.second.equals(cast.second);
+    }
 }

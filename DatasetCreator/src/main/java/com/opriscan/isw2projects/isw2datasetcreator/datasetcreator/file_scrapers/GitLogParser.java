@@ -56,4 +56,40 @@ public class GitLogParser {
         } while (true) ;
 
     }
+
+    public static List<String> getLogChunks(String log, String logDelimiter, String lineDelimiter) throws LogParsingException {
+
+        List<String> retVal = new ArrayList<>() ;
+
+        BufferedReader reader = new BufferedReader(new StringReader(log)) ;
+
+        String line ;
+        String chunk = "" ;
+
+        do {
+            try {
+                line = reader.readLine() ;
+                if (line == null) return retVal;
+
+                while (!Objects.equals(line, logDelimiter))
+                {
+                    chunk = chunk.concat(lineDelimiter.concat(line)) ;
+                    line = reader.readLine() ;
+                    if (line == null) {
+                        retVal.add(chunk) ;
+                        break ;
+                    }
+                }
+
+                retVal.add(chunk.substring(logDelimiter.length())) ;
+
+                chunk = "" ;
+            }
+            catch (IOException e) {
+                throw new LogParsingException("I/O error in parsing log") ;
+            }
+
+        } while (true) ;
+
+    }
 }

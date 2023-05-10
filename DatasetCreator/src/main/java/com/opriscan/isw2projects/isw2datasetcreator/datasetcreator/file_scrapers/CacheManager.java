@@ -53,7 +53,7 @@ public class CacheManager {
         }
     }
 
-    private String extractRepoName(String url) throws CacheException {
+    public String extractRepoName(String url) throws CacheException {
         int lastSlashIndex = 0;
         int dotIndex = url.length() ;
 
@@ -125,12 +125,39 @@ public class CacheManager {
         }
     }
 
-    public String logRepo(String repoURL) throws CloningException {
+    public boolean checkOutRepository(String repoURL, String commitHash) throws CloningException {
+
         if(!entries.containsKey(repoURL)) cloneRepository(repoURL) ;
 
         String[] commands = prepareCommands() ;
 
-        commands[2] = String.format("cd %s ; git --no-pager log --all --pretty=format:\"%%H%%n%%B%%n--\"", CACHE_PATH + "/" + entries.get(repoURL)) ;
+        commands[2] = String.format("cd %s ; git checkout %s", CACHE_PATH + "/" + entries.get(repoURL), commitHash) ;
+
+        try {
+            Process process = Runtime.getRuntime().exec(commands);
+
+            waitForProcess(process) ;
+
+            String errors = new String(process.getErrorStream().readAllBytes()) ;
+
+            return !errors.startsWith("error") ;
+
+        } catch (IOException e)
+        {
+            Thread.currentThread().interrupt() ;
+            throw new CloningException("Unable to launch git to checkout commit") ;
+
+        }
+
+
+    }
+
+    public String logRepo(String repoURL, String logFormat, String branch) throws CloningException {
+        if(!entries.containsKey(repoURL)) cloneRepository(repoURL) ;
+
+        String[] commands = prepareCommands() ;
+
+        commands[2] = String.format("cd %s ; git --no-pager log %s --pretty=format:\"%s\"", CACHE_PATH + "/" + entries.get(repoURL), branch, logFormat) ;
 
         try {
             Process process = Runtime.getRuntime().exec(commands) ;
@@ -149,7 +176,7 @@ public class CacheManager {
 
     public List<GitCommit> findCommitsContaining(String githubURL, String text) throws CloningException, LogParsingException {
 
-        String log = logRepo(githubURL) ;
+        String log = logRepo(githubURL, "%H%n%B%n--", "--all") ;
         return GitLogParser.parseCommitLog(log, text) ;
     }
 
