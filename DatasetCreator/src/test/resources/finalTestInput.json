@@ -1,0 +1,27 @@
+{
+  "beans" :
+  [
+    {
+      "gitURL" : "https://github.com/sebastianopriscan/TestRepo.git",
+      "branchName" : "main",
+      "releases" :
+      [
+        {
+          "name" : "1.0",
+          "start" : "2021-10-13",
+          "end" : "2023-04-30"
+        },
+        {
+          "name" : "2.0",
+          "start" : "2023-05-01",
+          "end" : "2023-05-11"
+        }
+      ],
+
+      "columns" :
+      [
+
+      ]
+    }
+  ]
+}

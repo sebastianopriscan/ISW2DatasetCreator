@@ -42,16 +42,16 @@ public class VersionClassExtractionTest {
 
         List<JIRARelease> releaseList = List.of(release1, release2) ;
 
-        Couple<String,String> entry1 = new Couple<>("1.0", "Hello.java") ;
-        Couple<String,String> entry2 = new Couple<>("1.0", "Calculator.java") ;
-        Couple<String,String> entry3 = new Couple<>("1.0", "HelloController.java") ;
-        Couple<String,String> entry4 = new Couple<>("1.0", "module-info.java") ;
+        Couple<String,String> entry1 = new Couple<>("1.0", "TestRepo/Hello.java") ;
+        Couple<String,String> entry2 = new Couple<>("1.0", "TestRepo/Calculator/src/main/java/com/example/calculator/Calculator.java") ;
+        Couple<String,String> entry3 = new Couple<>("1.0", "TestRepo/Calculator/src/main/java/com/example/calculator/HelloController.java") ;
+        Couple<String,String> entry4 = new Couple<>("1.0", "TestRepo/Calculator/src/main/java/module-info.java") ;
 
-        Couple<String,String> entry5 = new Couple<>("2.0", "Hello.java") ;
-        Couple<String,String> entry6 = new Couple<>("2.0", "Calculator.java") ;
-        Couple<String,String> entry7 = new Couple<>("2.0", "HelloController.java") ;
-        Couple<String,String> entry8 = new Couple<>("2.0", "Hi.java") ;
-        Couple<String,String> entry9 = new Couple<>("2.0", "module-info.java") ;
+        Couple<String,String> entry5 = new Couple<>("2.0", "TestRepo/Hello.java") ;
+        Couple<String,String> entry6 = new Couple<>("2.0", "TestRepo/Calculator/src/main/java/com/example/calculator/Calculator.java") ;
+        Couple<String,String> entry7 = new Couple<>("2.0", "TestRepo/Calculator/src/main/java/com/example/calculator/HelloController.java") ;
+        Couple<String,String> entry8 = new Couple<>("2.0", "TestRepo/FolderB/Hi.java") ;
+        Couple<String,String> entry9 = new Couple<>("2.0", "TestRepo/Calculator/src/main/java/module-info.java") ;
 
         Set<Couple<String, String>> set = new HashSet<>() ;
         set.add(entry1) ;

@@ -29,7 +29,7 @@ public class ClassExplorationTest {
     @Test
     public void testExploration() {
         List<String> files = new ArrayList<>() ;
-        files.add("App.java") ;
+        files.add("Test28032023/src/main/java/com/isw2/exercises/test28032023/App.java") ;
 
         List<String> callResult = null;
 

@@ -9,11 +9,13 @@ import java.util.Objects;
 
 public class ClassesScanner {
 
+    private final String CACHE_PATH = "./src/main/resources/.cache/" ;
+
     public List<String> extractClasses(String projectName) throws ExtractionException {
 
         List<String> retVal = new ArrayList<>() ;
 
-        File head = new File("./src/main/resources/.cache/" + projectName) ;
+        File head = new File(CACHE_PATH + projectName) ;
 
         if(!head.exists()) throw new ExtractionException("Directory not found in .cache") ;
 
@@ -26,7 +28,9 @@ public class ClassesScanner {
         if (!file.isDirectory()) {
             if(file.getName().endsWith(".java") &&
                     !file.getName().toLowerCase().contains("test")) {
-                list.add(file.getName()) ;
+                String pathName = file.getPath();
+
+                list.add(pathName.substring(CACHE_PATH.length())) ;
             }
 
             return ;

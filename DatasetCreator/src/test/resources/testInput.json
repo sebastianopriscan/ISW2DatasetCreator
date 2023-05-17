@@ -1,0 +1,22 @@
+{
+  "beans" :
+  [
+    {
+      "gitURL" : "github",
+      "branchName" : "main",
+      "releases" :
+      [
+        {
+          "name" : "1.0",
+          "start" : "2023-05-15",
+          "end" : "2023-05-17"
+        }
+      ],
+
+      "columns" :
+      [
+        "Pippo", "Baudo"
+      ]
+    }
+  ]
+}
