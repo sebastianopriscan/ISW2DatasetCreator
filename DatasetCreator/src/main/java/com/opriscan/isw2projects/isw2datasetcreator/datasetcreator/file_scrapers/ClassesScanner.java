@@ -9,7 +9,7 @@ import java.util.Objects;
 
 public class ClassesScanner {
 
-    private final String CACHE_PATH = "./src/main/resources/.cache/" ;
+    private static final String CACHE_PATH = "./src/main/resources/.cache/" ;
 
     public List<String> extractClasses(String projectName) throws ExtractionException {
 

@@ -4,6 +4,7 @@ import com.opriscan.isw2projects.isw2datasetcreator.datasetcreator.beans.CSVBean
 import com.opriscan.isw2projects.isw2datasetcreator.datasetcreator.exceptions.CSVCreationException;
 
 import java.io.*;
+import java.nio.file.Files;
 import java.util.List;
 
 public class OutputCSVBoundary {
@@ -14,7 +15,7 @@ public class OutputCSVBoundary {
             File file = new File("./src/main/resources/" + bean.getName() +".csv") ;
 
             if (file.exists()) {
-                if(!file.delete()) throw new CSVCreationException("Unable to replace file") ;
+                Files.delete(file.toPath()) ;
             }
             else {
                 if(!file.createNewFile()) throw new CSVCreationException("Unable to create new file") ;

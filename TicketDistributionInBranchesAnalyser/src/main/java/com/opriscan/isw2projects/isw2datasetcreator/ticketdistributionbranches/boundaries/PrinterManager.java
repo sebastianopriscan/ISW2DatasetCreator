@@ -6,6 +6,10 @@ import java.util.Set;
 
 public class PrinterManager {
 
+    private PrinterManager() {
+
+    }
+
     private static final List<Printer> printers = List.of(
             new TicketsNotInMasterPrinter()) ;
 

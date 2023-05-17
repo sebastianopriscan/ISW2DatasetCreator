@@ -31,22 +31,24 @@ public class TicketsNotInMasterPrinter extends Printer{
             for (Map.Entry<String, Set<List<String>>> ticket : tickets.entrySet()) {
 
                 boolean notInMaster = true ;
+                boolean nextOne = false ;
 
-                try {
-                    for (List<String> data : ticket.getValue()) {
+                for (List<String> data : ticket.getValue()) {
 
-                        String branch = data.get(3);
+                    String branch = extractBranch(data) ;
 
-                        if (branch.contains("remotes/origin/master")) {
-                            notInMaster = false;
-                            break;
-                        }
+                    if(branch == null) {
+                        nextOne = true ;
+                        break;
+                    }
+
+                    if (branch.contains("remotes/origin/master")) {
+                        notInMaster = false;
+                        break;
                     }
                 }
-                catch (IndexOutOfBoundsException e) {
-                    LOGGER.log(Level.SEVERE, "Error in row format");
-                    continue;
-                }
+
+                if(nextOne) continue;
 
                 if (notInMaster) {
                     printMapDump(ticket, out) ;
@@ -60,5 +62,14 @@ public class TicketsNotInMasterPrinter extends Printer{
         }
 
 
+    }
+
+    public String extractBranch(List<String> data) {
+        try {
+            return data.get(3) ;
+        } catch (IndexOutOfBoundsException e) {
+            LOGGER.log(Level.SEVERE, "Error in row format");
+            return null ;
+        }
     }
 }

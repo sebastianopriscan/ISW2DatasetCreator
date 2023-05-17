@@ -36,14 +36,14 @@ public class ProjectInputBoundary {
 
             DatasetCreatorController.buildController().startAnalysis(projects) ;
 
-        } catch (IOException ignored) {
-
+        } catch (IOException e) {
+            LOGGER.log(Level.SEVERE, "I/O Error. Details :\n {0}", e.getMessage()) ;
         } catch (VersionClassExtractionException e) {
-            LOGGER.log(Level.SEVERE, "Unable to extract the classes' column : \n" + e.getMessage()) ;
+            LOGGER.log(Level.SEVERE, "Unable to extract the classes' column :\n{0}", e.getMessage()) ;
         } catch (AnalyserNotFoundException e) {
             LOGGER.log(Level.SEVERE, "Analyser requested in input not found") ;
         } catch (CSVCreationException e) {
-            LOGGER.log(Level.SEVERE, "Unable to generate output CSV : \n" + e.getMessage()) ;
+            LOGGER.log(Level.SEVERE, "Unable to generate output CSV :\n{0}", e.getMessage()) ;
         } catch (CacheException e) {
             LOGGER.log(Level.SEVERE, "Error in converting project url to project name") ;
         }

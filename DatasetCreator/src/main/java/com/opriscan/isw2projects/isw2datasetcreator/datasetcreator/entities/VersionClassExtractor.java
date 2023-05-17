@@ -26,25 +26,7 @@ public class VersionClassExtractor {
 
             if (Objects.isNull(logEntries)) return new ArrayList<>() ;
 
-            for (JIRARelease release : releases) {
-                for (String chunk : logEntries) {
-                    String[] parts = chunk.split("--") ;
-
-                    if (parts.length != 2) throw new VersionClassExtractionException("Error in parsing log entries") ;
-
-                    LocalDate date = LocalDate.parse(parts[1], DateTimeFormatter.ofPattern("yyyy-MM-dd")) ;
-
-                    if(date.isBefore(release.getEnd()) && date.isAfter(release.getStart())) {
-                        if(!CacheManager.getInstance().checkOutRepository(gitURL, parts[0])) throw new VersionClassExtractionException("Error in checking out repository; wrong commit hash") ;
-
-                        List<String> classes = new ClassesScanner().extractClasses(CacheManager.getInstance().extractRepoName(gitURL)) ;
-
-                        for (String singleClass : classes) {
-                            coupleSet.add(new Couple<>(release.getName(), singleClass)) ;
-                        }
-                    }
-                }
-            }
+            analyseReleases(releases, logEntries, gitURL, coupleSet) ;
 
             return new ArrayList<>(coupleSet) ;
 
@@ -56,6 +38,28 @@ public class VersionClassExtractor {
             throw new VersionClassExtractionException("Error in parsing log") ;
         } catch (ExtractionException e) {
             throw new VersionClassExtractionException("Error in extracting messages from directory.\nDetails: " + e.getMessage()) ;
+        }
+    }
+
+    private void analyseReleases(List<JIRARelease> releases, List<String> logEntries, String gitURL, Set<Couple<String, String>> coupleSet) throws VersionClassExtractionException, CacheException, CloningException, ExtractionException {
+        for (JIRARelease release : releases) {
+            for (String chunk : logEntries) {
+                String[] parts = chunk.split("--") ;
+
+                if (parts.length != 2) throw new VersionClassExtractionException("Error in parsing log entries") ;
+
+                LocalDate date = LocalDate.parse(parts[1], DateTimeFormatter.ofPattern("yyyy-MM-dd")) ;
+
+                if(date.isBefore(release.getEnd()) && date.isAfter(release.getStart())) {
+                    if(!CacheManager.getInstance().checkOutRepository(gitURL, parts[0])) throw new VersionClassExtractionException("Error in checking out repository; wrong commit hash") ;
+
+                    List<String> classes = new ClassesScanner().extractClasses(CacheManager.getInstance().extractRepoName(gitURL)) ;
+
+                    for (String singleClass : classes) {
+                        coupleSet.add(new Couple<>(release.getName(), singleClass)) ;
+                    }
+                }
+            }
         }
     }
 }
